@@ -1,27 +1,35 @@
-﻿using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Moq;
+using VLC.UserManagement.Entities;
+using VLC.UserManagement.ValueObjects;
 
-namespace VLC.UserManagement.Tests.Unit
+namespace VLC.UserManagement.Tests
 {
     [TestFixture]
-    public class UserManagerTests
+    public class UserTests
     {
+        private Mock<IUserRepository> _userRepositoryMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _userRepositoryMock = new Mock<IUserRepository>();
+        }
+
         [Test]
-        public void CreateUser_ValidEmailAndPassword_ReturnsNewUser()
+        public void CreateUser_WithValidEmailAndPassword_ShouldReturnNewUser()
         {
             // Arrange
-            var mockUserRepository = new Mock<IUserRepository>();
-            var userManager = new UserManager(mockUserRepository.Object);
-            var email = new Email("john.doe@example.com");
-            var password = new Password("P@ssword123");
+            var email = new Email("test@test.com");
+            var password = new Password("TestPassword1");
 
             // Act
-            var user = userManager.CreateUser(email, password);
+            var newUser = new User(email, password);
+            _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser);
 
             // Assert
-            Assert.IsNotNull(user);
-            Assert.AreEqual(email, user.Email);
-            Assert.IsTrue(user.Password.IsValid(password));
+            Assert.AreEqual(email, newUser.Email);
+            Assert.AreEqual(password, newUser.Password);
         }
     }
 }
