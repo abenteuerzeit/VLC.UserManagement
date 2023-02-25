@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManager", "Module\UserManager.csproj", "{94D58CE2-8965-45E0-AB75-34F4C2CA9BD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManager", "Application\UserManager.csproj", "{94D58CE2-8965-45E0-AB75-34F4C2CA9BD7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{2C350F14-F778-41E5-AF5F-A3F927465004}"
 EndProject
