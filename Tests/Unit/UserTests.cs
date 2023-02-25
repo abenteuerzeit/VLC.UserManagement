@@ -1,14 +1,8 @@
-﻿using NUnit.Framework;
-using Moq;
+﻿using Moq;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
 using VLC.UserManagement.Entities;
 using VLC.UserManagement.ValueObjects;
-using Microsoft.AspNetCore.Http.HttpResults;
-using NUnit.Framework.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Data;
-using System.Net;
-using System.Security.Principal;
-using System.Security.Authentication;
 
 namespace VLC.UserManagement.Tests
 {
@@ -70,7 +64,7 @@ namespace VLC.UserManagement.Tests
             Assert.Throws<ArgumentException>(() => _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser));
         }
 
-        //TODO: public void UpdateUserEmail_WithValidEmail_ShouldReturnNewEmail()
+        // TODO: public void UpdateUserEmail_WithValidEmail_ShouldReturnNewEmail()
         // TODO:Test that a user cannot update their email address to an invalid email address.
         // TODO:Test that a user can update their password.
         // TODO:Test that a user cannot update their password to a weak password.
@@ -86,4 +80,3 @@ namespace VLC.UserManagement.Tests
         // TODO:Test that a user can delete their account and all associated data
     }
 }
-
