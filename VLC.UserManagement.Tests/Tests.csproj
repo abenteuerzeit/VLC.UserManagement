@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VLC.UserManagement\VLC.UserManagement.csproj" />
+    <ProjectReference Include="..\VLC.UserManagement\UserManager.csproj" />
   </ItemGroup>
 
 </Project>
