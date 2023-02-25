@@ -20,11 +20,11 @@ namespace VLC.UserManagement.Tests
         public void CreateUser_WithValidEmailAndPassword_ShouldReturnNewUser()
         {
             // Arrange
-            var email = new Email("test@test.com");
-            var password = new Password("TestPassword1");
+            Email email = new("test@test.com");
+            Password password = new("TestPassword1");
 
             // Act
-            var newUser = new User(email, password);
+            User newUser = new(email, password);
             _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser);
 
             // Assert
