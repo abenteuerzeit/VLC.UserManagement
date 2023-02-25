@@ -6,6 +6,7 @@ namespace VLC.UserManagement.Entities
     public interface IUserRepository
     {
         User Add(User user);
+        void Update(User newUser);
     }
     public class User
     {
@@ -24,6 +25,11 @@ namespace VLC.UserManagement.Entities
             Email = email ?? throw new ArgumentNullException(nameof(email));
             Password = password ?? throw new ArgumentNullException(nameof(password));
             Role = role ?? throw new ArgumentNullException(nameof(role));
+        }
+
+        public void ChangeEmail(Email newEmail)
+        {
+            throw new NotImplementedException();
         }
     }
 }
