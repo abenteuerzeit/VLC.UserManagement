@@ -8,6 +8,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Data;
 using System.Net;
 using System.Security.Principal;
+using System.Security.Authentication;
 
 namespace VLC.UserManagement.Tests
 {
@@ -66,6 +67,7 @@ namespace VLC.UserManagement.Tests
             // Assert
             Assert.AreEqual(email, newUser.Email);
             Assert.AreEqual(weakPassword, newUser.Password);
+            Assert.Throws<ArgumentException>(() => _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser));
         }
 
         //TODO: public void UpdateUserEmail_WithValidEmail_ShouldReturnNewEmail()

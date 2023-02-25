@@ -9,5 +9,10 @@ namespace VLC.UserManagement.Infrastructure.Repositories
             // Add user to database or any other persistence mechanism here
             return user;
         }
+
+        public void Update(User newUser)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
