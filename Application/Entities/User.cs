@@ -1,33 +1,33 @@
-﻿using System.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Data;
 using VLC.UserManagement.ValueObjects;
 
 namespace VLC.UserManagement.Entities
 {
-    public interface IUserRepository
+    public interface IUser
     {
-        User Add(User user);
-        void Update(User newUser);
     }
-    public class User
-    {
-        public Email Email { get; }
-        public Password Password { get; }
-        public Role Role { get; }
 
-        public User(Email email, Password password)
+    internal class User : IdentityUser, IUser
+    {
+        internal new Email Email { get; }
+        internal Password Password { get; }
+        internal Role Role { get; }
+
+        internal User(Email email, Password password)
         {
             Email = email ?? throw new ArgumentNullException(nameof(email));
             Password = password ?? throw new ArgumentNullException(nameof(password));
             Role = new Role("user");
         }
-        public User(Email email, Password password, Role role)
+        internal User(Email email, Password password, Role role)
         {
             Email = email ?? throw new ArgumentNullException(nameof(email));
             Password = password ?? throw new ArgumentNullException(nameof(password));
             Role = role ?? throw new ArgumentNullException(nameof(role));
         }
 
-        public void ChangeEmail(Email newEmail)
+        internal void ChangeEmail(Email newEmail)
         {
             throw new NotImplementedException();
         }
