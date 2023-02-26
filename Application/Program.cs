@@ -5,6 +5,9 @@ using UserManager.Domain.Users;
 using Microsoft.AspNetCore.OpenApi;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Html;
 
 namespace VLC.UserManagement
 {
@@ -28,6 +31,17 @@ namespace VLC.UserManagement
             userRouter.MapPost("/", CreateUser).WithOpenApi();
             userRouter.MapPut("/{id}", UpdateUser).WithOpenApi();
             userRouter.MapDelete("/{id}", DeleteUser).WithOpenApi();
+
+            var account = app.MapGroup("account");
+
+            account.MapPost("/signup/{email}", (string email) =>
+            {
+                var user = new User(new Email(email));
+                return TypedResults.Created("/signup/{email}", user);
+            }).WithOpenApi();
+
+
+
 
             if (app.Environment.IsDevelopment())
             {
@@ -104,6 +118,7 @@ namespace VLC.UserManagement
 
                 return TypedResults.Created($"/users/make/{quantity}", users);
             }
+
         }
     }
 }
