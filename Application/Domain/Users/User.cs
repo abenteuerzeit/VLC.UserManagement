@@ -26,10 +26,22 @@ namespace UserManager.Domain.Entities
             Password = password ?? throw new ArgumentNullException(nameof(password));
             Role = role ?? throw new ArgumentNullException(nameof(role));
         }
+        internal User()
+        {
+            Email = new Email("not set");
+            Password = new Password("not set");
+            Role = new Role("not set");
+        }
 
-        internal void ChangeEmail(Email newEmail)
+
+        protected void ChangeEmail(Email newEmail)
         {
             throw new NotImplementedException();
         }
+        protected string HashPassword(string password)
+        {
+            return new PasswordHasher<User>().HashPassword(this, password);
+        }
+
     }
 }

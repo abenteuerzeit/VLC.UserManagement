@@ -1,4 +1,7 @@
-﻿namespace UserManager.Domain.Users
+﻿using Microsoft.AspNetCore.Identity;
+using UserManager.Domain.Entities;
+
+namespace UserManager.Domain.Users
 {
     internal class Email
     {
