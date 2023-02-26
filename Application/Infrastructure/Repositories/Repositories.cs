@@ -1,4 +1,4 @@
-﻿using VLC.UserManagement.Entities;
+﻿using UserManager.Domain.Entities;
 
 namespace VLC.UserManagement.Infrastructure.Repositories
 {

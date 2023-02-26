@@ -8,5 +8,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Tests" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Application\" />
+	</ItemGroup>
 
 </Project>

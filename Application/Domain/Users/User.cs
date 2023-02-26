@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Data;
-using VLC.UserManagement.ValueObjects;
+using UserManager.Domain.Users;
 
-namespace VLC.UserManagement.Entities
+namespace UserManager.Domain.Entities
 {
     public interface IUser
     {

@@ -1,4 +1,4 @@
-﻿namespace VLC.UserManagement.ValueObjects
+﻿namespace UserManager.Domain.Users
 {
     internal class Email
     {

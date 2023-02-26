@@ -1,9 +1,9 @@
 ﻿using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using VLC.UserManagement.Entities;
+using UserManager.Domain.Entities;
+using UserManager.Domain.Users;
 using VLC.UserManagement.Infrastructure.Repositories;
-using VLC.UserManagement.ValueObjects;
 
 namespace VLC.UserManagement.Tests
 {
