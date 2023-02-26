@@ -4,10 +4,11 @@ using UserManager.Domain.Entities;
 using UserManager.Domain.Users;
 using Microsoft.AspNetCore.OpenApi;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace VLC.UserManagement
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -19,27 +20,14 @@ namespace VLC.UserManagement
 
 
             var app = builder.Build();
-            var userRouter = app.MapGroup("/users");
+            var userRouter = app.MapGroup("users");
 
-            app.MapGet("/", () => "Go to route localhost:port/users/make/{quantity} to create users");
-
-            userRouter.MapGet("/", GetAllUsers).WithName("Viva La Carte User Management Module").WithOpenApi();
+            userRouter.MapGet("/make/{quantity}", GenerateUsersByQuantity).WithOpenApi();
+            userRouter.MapGet("/", GetAllUsers).WithOpenApi();
             userRouter.MapGet("/{id}", GetUserById).WithOpenApi();
             userRouter.MapPost("/", CreateUser).WithOpenApi();
             userRouter.MapPut("/{id}", UpdateUser).WithOpenApi();
             userRouter.MapDelete("/{id}", DeleteUser).WithOpenApi();
-            userRouter.MapGet("/make/{quantity}", async (UserDb db, int quantity) =>
-            {
-                var users = new List<User>();
-                for (int i = 0; i < quantity; i++)
-                {
-                    User user = new(new Email($"user{i}@user-factory.com"));
-                    users.Add(user);
-                    db.Users.Add(user);
-                    await db.SaveChangesAsync();
-                }
-                return TypedResults.Created($"/users/make/{quantity}", users);
-            }).WithOpenApi();
 
             if (app.Environment.IsDevelopment())
             {
@@ -48,6 +36,7 @@ namespace VLC.UserManagement
                 {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                     options.RoutePrefix = string.Empty;
+                    options.DocumentTitle = "Viva La Carte - User Api";
                 });
             }
 
@@ -99,6 +88,21 @@ namespace VLC.UserManagement
                 db.Users.Remove(user);
                 await db.SaveChangesAsync();
                 return TypedResults.NoContent();
+            }
+
+            static async Task<IResult> GenerateUsersByQuantity(UserDb db, int quantity)
+            {
+                List<User> users = new();
+                for (int i = 0; i < quantity; i++)
+                {
+                    User user = new(new Email($"user_{i}@userMakerRoute.com"));
+
+                    users.Add(user);
+                    db.Users.Add(user);
+                }
+                await db.SaveChangesAsync();
+
+                return TypedResults.Created($"/users/make/{quantity}", users);
             }
         }
     }
