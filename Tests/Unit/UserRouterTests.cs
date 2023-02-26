@@ -1,34 +1,50 @@
-﻿//using Moq;
-//using NUnit.Framework;
-//using UserManager.Domain.Entities;
-//using UserManager.Domain.Users;
+﻿using Moq;
+using NUnit.Framework;
+using UserManager.Domain.Entities;
+using UserManager.Domain.Users;
+using Microsoft.AspNetCore.Mvc.Testing;
+using VLC.UserManagement.Infrastructure.Repositories;
+using System.Net;
+using System.Text;
+using Newtonsoft.Json;
 
-//namespace VLC.UserManagement.Tests
-//{
-//    [TestFixture]
-//    public class UserRouterTests
-//    {
-//        [Test]
-//        public async void GetAllUsers_ReturnsOKOfUsersResult()
-//        {
-//            // Arrange
-//            var db = CreateDbContext();
+namespace VLC.UserManagement.Tests
+{
+    [TestFixture]
+    public class UserRouterTests
+    {
+        [Test]
+        public async Task SwaggerApi_ReturnsOk()
+        {
+            // Arrange
+            var factory = new WebApplicationFactory<Program>();
+            var client = factory.CreateClient();
+            var responseCode = HttpStatusCode.OK;
 
-//            // Act
-//            var result = await UserApi.GetAllUsers(db);
+            // Act
+            var response = await client.GetAsync("/swagger/v1/swagger.json");
 
-//            // Assert
+            // Assert
+            Assert.AreEqual(responseCode, response.StatusCode);
+        }
 
-//            Assert.IsType<Ok<User[]>>(result);
+        [Test]
+        public async Task GetAllUsers_ReturnsOk()
+        {
+            // Arrange
+            var factory = new WebApplicationFactory<Program>();
+            var client = factory.CreateClient();
+            var responseCode = HttpStatusCode.OK;
 
-//        }
+            // Act
+            var response = await client.GetAsync("/users");
 
-//        private object CreateDbContext()
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
+            // Assert
+            Assert.AreEqual(responseCode, response.StatusCode);
+        }
 
-//}
+
+    }
+}
 
 

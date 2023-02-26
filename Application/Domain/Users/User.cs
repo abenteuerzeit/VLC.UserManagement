@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Data;
+using System.Text.Json.Serialization;
 using UserManager.Domain.Users;
 
 namespace UserManager.Domain.Entities
@@ -11,26 +11,24 @@ namespace UserManager.Domain.Entities
     internal class User : IdentityUser, IUser
     {
         internal new Email Email { get; }
-        internal Password Password { get; }
-        internal Role Role { get; }
+        internal Password Password { get; private set; }
 
+        [JsonConstructor]
         internal User(Email email, Password password)
         {
             Email = email ?? throw new ArgumentNullException(nameof(email));
-            Password = password ?? throw new ArgumentNullException(nameof(password));
-            Role = new Role("user");
+            Password = new Password(this, password.Value);
         }
-        internal User(Email email, Password password, Role role)
+        internal User(Email email)
         {
-            Email = email ?? throw new ArgumentNullException(nameof(email));
-            Password = password ?? throw new ArgumentNullException(nameof(password));
-            Role = role ?? throw new ArgumentNullException(nameof(role));
+            Email = email;
+            Password = new Password(this, "password");
         }
+
         internal User()
         {
             Email = new Email("not set");
-            Password = new Password("not set");
-            Role = new Role("not set");
+            Password = new Password(this, "password");
         }
 
 
@@ -38,10 +36,13 @@ namespace UserManager.Domain.Entities
         {
             throw new NotImplementedException();
         }
-        protected string HashPassword(string password)
-        {
-            return new PasswordHasher<User>().HashPassword(this, password);
-        }
 
+        internal void ChangePassword(string providedPassword)
+        {
+            if (providedPassword == null)
+                throw new ArgumentNullException(nameof(providedPassword));
+
+            Password = new(this, providedPassword);
+        }
     }
 }

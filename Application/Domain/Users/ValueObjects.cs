@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 using UserManager.Domain.Entities;
 
 namespace UserManager.Domain.Users
@@ -16,33 +17,31 @@ namespace UserManager.Domain.Users
             Value = email;
         }
     }
-
-    internal class Password
+    internal class Password : IPasswordHasher<User>
     {
-        internal string Value { get; }
+        internal string Salt { get; private set; }
+        internal string HashedPassword { get; private set; }
+        internal string Value { get; private set; }
 
-        internal Password(string password)
+        internal Password(User user, string newPassword)
         {
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(newPassword))
+            {
                 throw new ArgumentException("Password cannot be empty or null");
-
-            // TODO add additional password validation logic here
-            Value = password;
+            }
+            Salt = BCrypt.Net.BCrypt.GenerateSalt();
+            HashedPassword = HashPassword(user, newPassword);
         }
-    }
 
-    internal class Role
-    {
-        internal string Value { get; }
-
-        internal Role(string role)
+        public string HashPassword(User user, string password)
         {
-            if (string.IsNullOrWhiteSpace(role))
-                throw new ArgumentException("Role cannot be empty or null");
+            return BCrypt.Net.BCrypt.HashPassword(password, Salt);
+        }
 
-            // TODO add additional role validation logic here
-            Value = role;
+        public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(providedPassword, hashedPassword) ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;
         }
     }
-
 }
+

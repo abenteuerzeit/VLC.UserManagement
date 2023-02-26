@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using UserManager.Domain.Entities;
 using UserManager.Domain.Users;
 using Microsoft.AspNetCore.OpenApi;
-
+using System.Runtime.CompilerServices;
 
 namespace VLC.UserManagement
 {
@@ -33,7 +33,7 @@ namespace VLC.UserManagement
                 var users = new List<User>();
                 for (int i = 0; i < quantity; i++)
                 {
-                    User user = new(new Email($"user{i}@user-factory.com"), new Password($"P@$5wOrd&{new Random(i)}"));
+                    User user = new(new Email($"user{i}@user-factory.com"));
                     users.Add(user);
                     db.Users.Add(user);
                     await db.SaveChangesAsync();
