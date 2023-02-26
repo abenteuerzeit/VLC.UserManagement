@@ -10,39 +10,38 @@ namespace UserManager.Domain.Entities
 
     internal class User : IdentityUser, IUser
     {
-        internal new Email Email { get; }
-        internal Password Password { get; private set; }
 
         [JsonConstructor]
         internal User(Email email, Password password)
         {
-            Email = email ?? throw new ArgumentNullException(nameof(email));
-            Password = new Password(this, password.Value);
+            Email = email.Value ?? throw new ArgumentNullException(nameof(email));
+            _ = new Password(this, password.Value);
         }
         internal User(Email email)
         {
-            Email = email;
-            Password = new Password(this, "password");
+            Email = email.Value;
+            _ = new Password(this, "password");
         }
 
         internal User()
         {
-            Email = new Email("not set");
-            Password = new Password(this, "password");
+            Email = new Email("not set").ToString();
+            _ = new Password(this, "password");
         }
 
 
-        protected void ChangeEmail(Email newEmail)
+        protected bool ChangeEmail(Email newEmail)
         {
-            throw new NotImplementedException();
+            Email = newEmail.Value;
+            return Email == newEmail.Value;
         }
 
-        internal void ChangePassword(string providedPassword)
+        internal bool ChangePassword(string providedPassword)
         {
             if (providedPassword == null)
                 throw new ArgumentNullException(nameof(providedPassword));
-
-            Password = new(this, providedPassword);
+            Password newPassword = new(this, providedPassword);
+            return newPassword.Value == providedPassword && newPassword.HashedPassword == PasswordHash;
         }
     }
 }

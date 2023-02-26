@@ -31,6 +31,7 @@ namespace UserManager.Domain.Users
             }
             Salt = BCrypt.Net.BCrypt.GenerateSalt();
             HashedPassword = HashPassword(user, newPassword);
+            user.PasswordHash = HashedPassword;
         }
 
         public string HashPassword(User user, string password)
