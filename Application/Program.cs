@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using UserManager.Domain.Entities;
 using UserManager.Domain.Users;
+using Microsoft.AspNetCore.OpenApi;
+
 
 namespace VLC.UserManagement
 {
@@ -11,18 +14,20 @@ namespace VLC.UserManagement
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<UserDb>(options => options.UseInMemoryDatabase("UserDb"));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
 
             var app = builder.Build();
             var userRouter = app.MapGroup("/users");
 
-            app.MapGet("/", () => "Viva La Carte User Management Module. Go to route localhost:port/users/make/{quantity} to create users");
+            app.MapGet("/", () => "Go to route localhost:port/users/make/{quantity} to create users");
 
-            userRouter.MapGet("/", GetAllUsers);
-            userRouter.MapGet("/{id}", GetUserById);
-            userRouter.MapPost("/", CreateUser);
-            userRouter.MapPut("/{id}", UpdateUser);
-            userRouter.MapDelete("/{id}", DeleteUser);
+            userRouter.MapGet("/", GetAllUsers).WithName("Viva La Carte User Management Module").WithOpenApi();
+            userRouter.MapGet("/{id}", GetUserById).WithOpenApi();
+            userRouter.MapPost("/", CreateUser).WithOpenApi();
+            userRouter.MapPut("/{id}", UpdateUser).WithOpenApi();
+            userRouter.MapDelete("/{id}", DeleteUser).WithOpenApi();
             userRouter.MapGet("/make/{quantity}", async (UserDb db, int quantity) =>
             {
                 var users = new List<User>();
@@ -34,9 +39,17 @@ namespace VLC.UserManagement
                     await db.SaveChangesAsync();
                 }
                 return TypedResults.Created($"/users/make/{quantity}", users);
-            });
+            }).WithOpenApi();
 
-
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
+            }
 
             app.Run();
 
