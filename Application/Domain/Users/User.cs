@@ -1,47 +1,48 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Text.Json.Serialization;
-using UserManager.Domain.Users;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
-namespace UserManager.Domain.Entities
+namespace UserManager.Domain.Users;
+
+/// <summary>
+///     The user interface.
+/// </summary>
+public interface IUser
 {
-    public interface IUser
+}
+
+/// <summary>
+///     The user.
+/// </summary>
+internal class User : IdentityUser, IUser
+{
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="User" /> class.
+    /// </summary>
+    /// <param name="email">The email.</param>
+    /// <param name="password">The password.</param>
+    [JsonConstructor]
+    public User(Email email, Password password)
     {
+        Email = email.Value;
+        _ = new Password(this, password.Value);
     }
 
-    internal class User : IdentityUser, IUser
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="User" /> class.
+    /// </summary>
+    /// <param name="email">The email.</param>
+    public User(Email email)
     {
+        Email = email.Value;
+        _ = new Password(this, "password");
+    }
 
-        [JsonConstructor]
-        internal User(Email email, Password password)
-        {
-            Email = email.Value ?? throw new ArgumentNullException(nameof(email));
-            _ = new Password(this, password.Value);
-        }
-        internal User(Email email)
-        {
-            Email = email.Value;
-            _ = new Password(this, "password");
-        }
-
-        internal User()
-        {
-            Email = new Email("not set").ToString();
-            _ = new Password(this, "password");
-        }
-
-
-        protected bool ChangeEmail(Email newEmail)
-        {
-            Email = newEmail.Value;
-            return Email == newEmail.Value;
-        }
-
-        internal bool ChangePassword(string providedPassword)
-        {
-            if (providedPassword == null)
-                throw new ArgumentNullException(nameof(providedPassword));
-            Password newPassword = new(this, providedPassword);
-            return newPassword.Value == providedPassword && newPassword.HashedPassword == PasswordHash;
-        }
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="User" /> class.
+    /// </summary>
+    public User()
+    {
+        Email = "not set";
+        _ = new Password(this, "password");
     }
 }

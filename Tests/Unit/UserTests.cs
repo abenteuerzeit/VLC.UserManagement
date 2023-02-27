@@ -1,83 +1,193 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
-using System.Data;
-using UserManager.Domain.Entities;
 using UserManager.Domain.Users;
-using VLC.UserManagement.Infrastructure.Repositories;
 
-namespace VLC.UserManagement.Tests
+namespace Tests.Unit;
+
+/// <summary>
+///     The user db tests.
+/// </summary>
+[TestFixture]
+public class UserDbTests
 {
-    [TestFixture]
-    public class UserTests
+    /// <summary>
+    ///     Users the should not be null.
+    /// </summary>
+    [Test]
+    public void Users_ShouldNotBeNull()
     {
-        private Mock<IUserRepository> _userRepositoryMock;
+        // Arrange
+        var options = new DbContextOptionsBuilder<UserDb>()
+            .UseInMemoryDatabase("UsersDatabase")
+            .Options;
 
-        [SetUp]
-        public void Setup()
-        {
-            _userRepositoryMock = new Mock<IUserRepository>();
-        }
+        // Act
+        using var context = new UserDb(options);
 
-        [Test]
-        public void CreateUser_WithValidEmail_ShouldReturnNewUser()
-        {
-            // Arrange
-            Email email = new("create_user@test.com");
-            User user = new(email);
+        // Assert
+        Assert.IsNotNull(context.Users);
+    }
 
-            // Act
-            _userRepositoryMock.Setup(x => x.Add(user)).Returns(user);
-            var newUser = _userRepositoryMock.Object.Add(user);
 
-            // Assert
-            Assert.AreEqual(user, newUser);
-        }
+    /// <summary>
+    ///     Constructors the with email and valid password should create user with hashed password.
+    /// </summary>
+    [Test]
+    public void Constructor_WithEmailAndValidPassword_ShouldCreateUserWithHashedPassword()
+    {
+        // Arrange
+        var email = new Email("test@example.com");
+        var password = new Password(new User(), "password");
 
-        [Test]
-        public void CreateUser_WithInvalidEmail_ShouldThrowException()
-        {
-            // Arrange
-            Email email = new("invalid_email");
-            User user = new(email);
+        // Act
+        var user = new User(email, password);
 
-            // Act
-            _userRepositoryMock.Setup(x => x.Add(user)).Throws(new ConstraintException("Email is invalid"));
+        // Assert
+        user.Email.Should().Be(email.Value);
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
 
-            // Assert
-            Assert.Throws<ConstraintException>(() => _userRepositoryMock.Object.Add(user));
-        }
 
-        //[Test]
-        //public void CreateUser_WithWeakPassword_ShouldThrowException()
-        //{
-        //    // Arrange
-        //    Email email = new("test@test.com");
-        //    Password weakPassword = new("password");
+    /// <summary>
+    ///     Constructors the with email only should create user with default password.
+    /// </summary>
+    [Test]
+    public void Constructor_WithEmailOnly_ShouldCreateUserWithDefaultPassword()
+    {
+        // Arrange
+        var email = new Email("test@example.com");
 
-        //    // Act
-        //    User newUser = new(email, weakPassword);
-        //    _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser);
+        // Act
+        var user = new User(email);
 
-        //    // Assert
-        //    Assert.AreEqual(email, newUser.Email);
-        //    Assert.AreEqual(weakPassword, newUser.Password);
-        //    Assert.Throws<ArgumentException>(() => _userRepositoryMock.Setup(x => x.Add(newUser)).Returns(newUser));
-        //}
+        // Assert
+        user.Email.Should().Be(email.Value);
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
 
-        // TODO: public void UpdateUserEmail_WithValidEmail_ShouldReturnNewEmail()
-        // TODO:Test that a user cannot update their email address to an invalid email address.
-        // TODO:Test that a user can update their password.
-        // TODO:Test that a user cannot update their password to a weak password.
-        // TODO:Test that a user can change their name in their profile.
-        // TODO:Test that an admin can create a new user account and assign a role.
-        // TODO:Test that an admin can update a user's role to grant or revoke permissions.
-        // TODO:Test that an admin can view a list of all users and their roles.
-        // TODO:Test that an admin can deactivate a user's account to prevent them from accessing the app.
-        // TODO:Test that an admin can reactivate a previously deactivated user account.
-        // TODO:Test that a user can upload a profile picture to display on their profile.
-        // TODO:Test that an admin can reset a user's password if they forget it.
-        // TODO:Test that a user can reset their password using the email address associated with their account.
-        // TODO:Test that a user can delete their account and all associated data
+    /// <summary>
+    ///     Constructors the with no arguments should create user with default email and password.
+    /// </summary>
+    [Test]
+    public void Constructor_WithNoArguments_ShouldCreateUserWithDefaultEmailAndPassword()
+    {
+        // Arrange
+
+        // Act
+        var user = new User();
+
+        // Assert
+        user.Email.Should().Be("not set");
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
+
+    /// <summary>
+    ///     Users the db should have db set of users.
+    /// </summary>
+    [Test]
+    public void UserDb_ShouldHaveDbSetOfUsers()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<UserDb>()
+            .UseInMemoryDatabase("UserDb")
+            .Options;
+
+        // Act
+        using var context = new UserDb(options);
+        // Assert
+        context.Users.Should().NotBeNull();
+    }
+
+    /// <summary>
+    ///     User the should be initialized with email and password.
+    /// </summary>
+    [Test]
+    public void User_ShouldBeInitializedWithEmailAndPassword()
+    {
+        // Arrange
+        var email = new Email("test@example.com");
+        var password = new Password(new User(), "password123");
+
+        // Act
+        var user = new User(email, password);
+
+        // Assert
+        user.Email.Should().Be(email.Value);
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
+
+    /// <summary>
+    ///     User the should be initialized with email only.
+    /// </summary>
+    [Test]
+    public void User_ShouldBeInitializedWithEmailOnly()
+    {
+        // Arrange
+        var email = new Email("test@example.com");
+
+        // Act
+        var user = new User(email);
+
+        // Assert
+        user.Email.Should().Be(email.Value);
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
+
+    /// <summary>
+    ///     User the should be initialized with default values.
+    /// </summary>
+    [Test]
+    public void User_ShouldBeInitializedWithDefaultValues()
+    {
+        // Arrange
+
+        // Act
+        var user = new User();
+
+        // Assert
+        user.Email.Should().NotBeNull();
+        user.PasswordHash.Should().NotBeNullOrEmpty();
+    }
+
+    /// <summary>
+    ///     Email the should throw argument null exception if value is null.
+    /// </summary>
+    [Test]
+    public void Email_ShouldThrowArgumentNullExceptionIfValueIsNull()
+    {
+        // Arrange, Act, Assert
+        Assert.Throws<ArgumentNullException>(() => new Email(null));
+    }
+
+    /// <summary>
+    ///     Password the should throw argument null exception if value is null.
+    /// </summary>
+    [Test]
+    public void Password_ShouldThrowArgumentNullExceptionIfValueIsNull()
+    {
+        // Arrange
+        var user = new User();
+
+        // Act, Assert
+        Assert.Throws<ArgumentNullException>(() => new Password(user, null));
+    }
+
+    /// <summary>
+    ///     Passwords the hash password should return hashed password.
+    /// </summary>
+    [Test]
+    public void Password_HashPassword_ShouldReturnHashedPassword()
+    {
+        // Arrange
+        var user = new User();
+        const string? password = "password123";
+        var passwordHasher = new Password(user, password);
+
+        // Act
+        var hashedPassword = passwordHasher.HashPassword(user, password);
+
+        // Assert
+        hashedPassword.Should().NotBeNullOrEmpty();
     }
 }

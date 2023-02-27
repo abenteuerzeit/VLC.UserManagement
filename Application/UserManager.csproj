@@ -4,6 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<SonarQubeTestProject>False</SonarQubeTestProject>
 	</PropertyGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Tests" />

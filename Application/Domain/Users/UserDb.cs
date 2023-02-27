@@ -1,19 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserManager.Domain.Entities;
 
-namespace UserManager.Domain.Users
+namespace UserManager.Domain.Users;
+
+/// <summary>
+///     The user db.
+/// </summary>
+internal class UserDb : DbContext
 {
-    internal class UserDb : DbContext
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="UserDb" /> class.
+    /// </summary>
+    /// <param name="options">The options.</param>
+    public UserDb(DbContextOptions<UserDb> options) : base(options)
     {
-        public UserDb(DbContextOptions<UserDb> options) : base(options)
-        {
-        }
-
-        internal DbSet<User> Users => Set<User>();
-
-        //internal DbSet<Email> Emails => Set<Email>();
-
-        //internal DbSet<Password> Passwords => Set<Password>();
-
     }
+
+    /// <summary>
+    ///     Gets the users.
+    /// </summary>
+    internal DbSet<User> Users => Set<User>();
 }
