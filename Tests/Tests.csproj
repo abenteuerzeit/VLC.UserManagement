@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Application\UserManager.csproj" />
+		<ProjectReference Include="..\Src\UserManager.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -5,9 +5,14 @@ using UserManager.Utility;
 
 namespace UserManager;
 
+/// <summary>
+/// Entry point for the user management module
+/// </summary>
 public static class Program
 {
+#pragma warning disable CS1591
     public static void Main(string[] args)
+#pragma warning restore CS1591 
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddDbContext<UserDb>(options => options.UseInMemoryDatabase("UserDb"));

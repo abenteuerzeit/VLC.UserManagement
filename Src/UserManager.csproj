@@ -1,16 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <TypeScriptTarget>ESNext</TypeScriptTarget>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <TypeScriptTarget>ESNext</TypeScriptTarget>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<SonarQubeTestProject>False</SonarQubeTestProject>
+		<StartupObject>UserManager.Program</StartupObject>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>abenteuerzeit</Authors>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <NoWarn></NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <NoWarn></NoWarn>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<InternalsVisibleTo Include="Tests" />
+	  <Compile Remove="Src\**" />
+	  <Content Remove="Src\**" />
+	  <EmbeddedResource Remove="Src\**" />
+	  <None Remove="Src\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Application\" />
+		<InternalsVisibleTo Include="Tests" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
